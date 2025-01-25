@@ -1,0 +1,11 @@
+# PyCharm Project Settings
+.idea/
+
+# Python Bytecode Cache
+__pycache/
+
+# Project metadata folder
+*.egg-info/
+
+# Program-generated data files
+data/
