@@ -2,6 +2,7 @@ import tkinter as tk
 import logging
 from PIL import Image, ImageTk
 import cv2 as cv
+import threading
 from rubiks_cube_state_recognition.cube_state.CubeState import CubeFace
 from rubiks_cube_state_recognition.cube_capture.CubeStateFinder import CubeStateFinder
 from rubiks_cube_state_recognition.solution_finder.ThistlethwaiteSolver import ThistlethwaiteSolver
@@ -135,9 +136,14 @@ class CapturePage(tk.Frame):
         colour_grid_container = tk.Frame(master=right_container)
         colour_grid_container.grid(column=0, row=1, pady=10)
 
-        self.solve_button = tk.Button(master=right_container, text='SOLVE', font=('Calibri', 30), width=10,
-                                      relief='solid', command=self.find_solution)
-        self.solve_button.grid(column=1, row=1)
+        self.solve_button = tk.Label(
+            master=right_container,
+            font=('Calibri', 30),
+            width=10,
+            relief='solid',
+            foreground='white')
+        self.solve_button.bind('<Button-1>', lambda event: threading.Thread(target=self.find_solution, daemon=True).start())
+        self.solve_button.grid(column=1, row=1, padx=(10, 0))
 
         w_tl = tk.Label(master=cube_state_diagram_container)
         w_tl.bind("<Button-1>", lambda event: self.set_cube_tile_state_colour(w_tl, 'w_face', 'tl'))
@@ -393,16 +399,15 @@ class CapturePage(tk.Frame):
 
     def capture_loop(self):
         self.update_cube_state()
-        if cube_state_finder.cube_state.is_valid() and not cube_state_finder.cube_state.is_solved():
-            if self.solve_button['background'] == 'red':
+        if cube_state_finder.cube_state.is_valid():
+            if not cube_state_finder.cube_state.is_solved() and self.solve_button['background'] == 'red':
                 self.solve_button.configure(
-                    state='normal',
-                    foreground='white',
-                    background='green',
-                    activebackground='dark green',
-                    highlightbackground='green')
+                    text='SOLVE',
+                    background='green')
         else:
-            self.solve_button.configure(state='disabled', background='red', highlightbackground='red')
+            self.solve_button.configure(
+                text='SOLVE',
+                background='red')
         # makes frame tkinter compatible
         frame = cube_state_finder.video_feed.frame
         while frame is None:
@@ -440,14 +445,15 @@ class CapturePage(tk.Frame):
             cube_face_state.__setattr__(tile_name, self.colour_grid_chosen_colour[0])
 
     def find_solution(self):
-        global solution
-        self.solve_button.configure(text='Finding\nSolution', background=COLOURS['grey3'], state='disabled')
-        self.solve_button.update_idletasks()
-        solution = thistlethwaite_solver.solve(cube_state_finder.cube_state)
-        self.solve_button.configure(text='Solution\nFound', background=COLOURS['grey3'], state='disabled')
-        self.solve_button.update_idletasks()
-        self.solve_button.after(3000, lambda: self.controller.show_frame(SolutionPage, self.solve_button))
-        self.solve_button.configure(text='solve', background='red', highlightbackground='red')
+        if self.solve_button['background'] != COLOURS['grey3']:
+            logging.info("finding solution")
+            global solution
+            self.solve_button.configure(text='Finding\nSolution', background=COLOURS['grey3'])
+            self.solve_button.update_idletasks()
+            solution = thistlethwaite_solver.solve(cube_state_finder.cube_state)
+            self.solve_button.configure(text='Solution\nFound', background=COLOURS['grey3'])
+            self.solve_button.update_idletasks()
+            self.solve_button.after(thistlethwaite_solver.min_group_search_time*100, lambda: self.controller.show_frame(SolutionPage, self.solve_button))
 
 
 class SolutionPage(tk.Frame):
