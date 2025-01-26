@@ -406,7 +406,8 @@ class CapturePage(tk.Frame):
         # makes frame tkinter compatible
         frame = cube_state_finder.video_feed.frame
         while frame is None:
-            pass
+            cube_state_finder.video_feed.update_frame()
+            frame = cube_state_finder.video_feed.frame
         frame = cv.resize(frame, (int(self.frame_width * 1 / 2), int(self.frame_height * 1 / 2)))
         frame = cv.cvtColor(frame, cv.COLOR_BGR2RGBA)
         frame = Image.fromarray(frame)
