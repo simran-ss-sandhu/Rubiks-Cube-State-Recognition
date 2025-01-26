@@ -586,6 +586,7 @@ class SettingsPage(tk.Frame):
 
     def save_changes(self):
         thistlethwaite_solver.min_group_search_time = self.min_group_search_time.get()
+        logging.info(f"min group search time set to {self.min_group_search_time.get()}")
 
 
 class TutorialPage(tk.Frame):
