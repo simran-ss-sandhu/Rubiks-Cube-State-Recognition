@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rubiks-cube-state-recognition"
+version = "1.0.0"
+readme = "README.md"
+dependencies = [
+    "numpy==2.2.2",
+    "opencv-python==4.11.0.86",
+    "pillow==11.1.0"
+]
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+my-package-cli = "rubiks_cube_state_recognition.__main__:main"
