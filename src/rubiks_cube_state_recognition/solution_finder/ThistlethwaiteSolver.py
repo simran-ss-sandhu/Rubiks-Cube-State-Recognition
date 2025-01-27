@@ -8,8 +8,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from rubiks_cube_state_recognition.cube_state.CubeState import CubeState
 
-logging.basicConfig(level=logging.INFO, format="|%(asctime)s|%(name)s|%(levelname)s| %(message)s")
-
 # All possible moves (Excluding only previous and opposite turns).
 G0_VALID_NEXT_MOVES = {
     None: ['U', "U'", 'U2', 'D', "D'", 'D2', 'F', "F'", 'F2', 'B', "B'", 'B2', 'L', "L'", 'L2', 'R', "R'", 'R2'],

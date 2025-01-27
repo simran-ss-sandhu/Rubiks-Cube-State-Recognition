@@ -2,8 +2,6 @@ import logging
 from copy import deepcopy
 from rubiks_cube_state_recognition.cube_state.CubiesState import CornerCubiesState, EdgeCubiesState
 
-logging.basicConfig(level=logging.INFO, format="|%(asctime)s|%(name)s|%(levelname)s| %(message)s")
-
 # maps the first character of the turn type to its cube face attribute name
 TURN_TYPE_TO_FACE_NAME = {'U': 'w_face',
                           'D': 'y_face',
