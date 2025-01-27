@@ -6,13 +6,15 @@ SIX_MINUS_INDEX = [6, 5, 4, 3, 2, 1, 0]  # element = 6 - index
 
 # element of COUNT_ONES = the number of 1's in the binary version of the index
 # loads COUNTS_ONES list from pickle file
+directory = 'data'
 try:
-    with open(os.path.join('data', 'count_ones.pkl'), 'rb') as file:
+    with open(os.path.join(directory, 'count_ones.pkl'), 'rb') as file:
         COUNT_ONES = pickle.load(file)  # stores the list in a constant variable
 
 # creates and stores COUNT_ONES list if it does not exist
 except FileNotFoundError:
-    with open(os.path.join('data', 'count_ones.pkl'), 'wb') as file:
+    os.makedirs(directory, exist_ok=True)
+    with open(os.path.join(directory, 'count_ones.pkl'), 'wb') as file:
         COUNT_ONES = []
 
         # the largest bit string length is 12 (for edge cubies). Base is 2 as the bit string is binary.
